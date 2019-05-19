@@ -2,11 +2,16 @@ package bugger;
 
 import bugger.handlers.*;
 import java.io.*;
-import com.sun.net.httpserver.*;
+import java.sql.*;
 import java.net.InetSocketAddress;
+import com.sun.net.httpserver.*;
 
 public class Bugger
 	{
+	//May change this to a parameter or something later. . . for now this will do
+	protected static final String dbName= "../database/buggerDatabase.sqlite";
+	protected static final String connectionURL= "jdbc:sqlite:" + dbName;
+
     public static void main(String[] args)
 		{
 		//Making sure we have a correct number of arguments
@@ -16,6 +21,9 @@ public class Bugger
 			return;
 			}
 
+		//Creates the database if it doesn't exist
+		ValidateDatabase();
+
 		//Setting up the ports
 		int portAddress = Integer.parseInt(args[0]);
 		InetSocketAddress port = new InetSocketAddress(portAddress);
@@ -24,10 +32,16 @@ public class Bugger
 		try
 			{
 	        System.out.println("Starting up Bugger v0.3 [||] on Port: " + portAddress);
+			//Set up the port
 			server = HttpServer.create(port,0);
-			server.createContext("/user/register", new RegisterHandler());
 
-			//Final setup
+			//Listen in for requests
+			server.createContext("/api/users/login", new LoginHandler());
+			server.createContext("/api/users/register", new RegisterHandler());
+
+			server.createContext("/", new RegisterHandler());
+
+			//Execute the database!
 			server.setExecutor(null);
 			server.start();
 			}
@@ -37,6 +51,12 @@ public class Bugger
 			e.printStackTrace();
 			}
 
+		//Let us know that bugger has started successfully!
 		System.out.println("# -- Running Bugger -- #");
     	}
+	//May put this into a seperate class later, but we'll see
+	public static void ValidateDatabase()
+		{
+	
+		}
 	}
