@@ -1,6 +1,7 @@
 package bugger;
 
 import bugger.handlers.*;
+import bugger.dataAccess.*;
 import java.io.*;
 import java.sql.*;
 import java.net.InetSocketAddress;
@@ -21,14 +22,15 @@ public class Bugger
 			return;
 			}
 
-		//Creates the database if it doesn't exist
-		ValidateDatabase();
+		//Creates the tables in the database if it doesn't exist
+		DataAccess.ValidateDatabase();
 
 		//Setting up the ports
 		int portAddress = Integer.parseInt(args[0]);
 		InetSocketAddress port = new InetSocketAddress(portAddress);
 		HttpServer server;
 
+		//Try getting the server all up and running
 		try
 			{
 	        System.out.println("Starting up Bugger v0.3 [||] on Port: " + portAddress);
@@ -54,9 +56,5 @@ public class Bugger
 		//Let us know that bugger has started successfully!
 		System.out.println("# -- Running Bugger -- #");
     	}
-	//May put this into a seperate class later, but we'll see
-	public static void ValidateDatabase()
-		{
-	
-		}
+	//End of Bugger Class
 	}
