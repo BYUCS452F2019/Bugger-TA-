@@ -9,10 +9,6 @@ import com.sun.net.httpserver.*;
 
 public class Bugger
 	{
-	//May change this to a parameter or something later. . . for now this will do
-	protected static final String dbName= "../database/buggerDatabase.sqlite";
-	protected static final String connectionURL= "jdbc:sqlite:" + dbName;
-
     public static void main(String[] args)
 		{
 		//Making sure we have a correct number of arguments
