@@ -22,6 +22,17 @@ public class DataAccess
 			Statement statement = connect.createStatement();
 
 			//Create user table
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS ServerData("
+									+ "serverID VARCHAR(255) NOT NULL,"
+									+ "lastUserID int NOT NULL,"
+									+ "lastCookieID int NOT NULL,"
+									+ "lastPermID int NOT NULL,"
+									+ "lastProjectID int NOT NULL,"
+									+ "lastBugID int NOT NULL)");
+
+			SetUpServerSettings(connect);
+
+			//Create user table
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS User("
 									+ "userID VARCHAR(255) NOT NULL PRIMARY KEY,"
 									+ "username VARCHAR(255) NOT NULL,"
@@ -33,7 +44,7 @@ public class DataAccess
 
 			//Create a Table to store user cookies
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Cookies("
-									+ "cookieID VARCHAR(255) NOT NULL PRIMARY KEY,"
+									+ "cookieID VARCHAR(255) NOT NULL PRIMARY KEY UNIQUE,"
 									+ "userID VARCHAR(255) NOT NULL,"
 									+ "timestamp DATETIME NOT NULL)");
 
@@ -54,13 +65,20 @@ public class DataAccess
 									+ "projectName VARCHAR(255) NOT NULL,"
 									+ "discription TEXT)");
 
-			//Create the admin user/admin permission
+			//Create the admin user/admin permission; Make sure that the admin account is in the admin permission group
+			if(PermissionData.GetByName("admin") == null)
+				{
+				System.out.println("admin permission not found -- Creating new one. . .");
+				PermissionData.CreateNewPermission("admin","Admin is a security group that is used to adminster the server. You can use it to add new users and create security groups.");
+				}
 
-			if(UserData.GetUserByUsername("admin") == null)
+			if(!UserData.CheckForUserByUsername("admin"))
 				{
 				System.out.println("admin account not found -- Creating new one. . .");
 				UserData.CreateNewUser("admin", "admin@bugger.admin", "admin", "admin", "Sudo", "Su");
 				}
+
+			UserData.AddUserPermission("admin","admin");
 
 			connect.close();
 			}
@@ -69,4 +87,51 @@ public class DataAccess
 			System.out.println(e.getMessage()); 
         	}
 		}
+
+	private static void SetUpServerSettings(Connection connect)
+		{
+		try
+			{
+			Statement statement = connect.createStatement();
+
+			ResultSet result = statement.executeQuery("SELECT COUNT(*) AS rowcount FROM ServerData" );
+			result.next();
+
+			if(result.getInt("rowcount") == 0)
+				{
+				statement.executeUpdate("INSERT INTO ServerData(serverID,lastUserID,lastCookieID,lastPermID,lastProjectID,lastBugID)" +
+										"VALUES ('bugger',0,0,0,0,0)");
+				}
+			}
+		catch (Exception e)
+			{
+			System.out.println(e.getMessage()); 
+	    	}
+		}
+
+	public static int GetLastID(String columnName)
+		{
+		int returnValue = 0;
+		try
+			{
+			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
+			Statement statement = connect.createStatement();
+
+			ResultSet result = statement.executeQuery("SELECT " + columnName + " FROM ServerData");
+			result.next();
+			returnValue = result.getInt(columnName);
+			result.close();
+
+			statement.executeUpdate("UPDATE ServerData SET " + columnName + " = " + (returnValue+1) + " WHERE serverID = 'bugger'");
+
+			connect.close();
+			}
+		catch (Exception e)
+			{
+			System.out.println("Problem looking up Last ID: " + e.getMessage()); 
+        	}
+		return(returnValue);
+		}
+
+	//End of Data Access
 	}

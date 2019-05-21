@@ -2,10 +2,11 @@ package bugger.dataModel;
 
 import java.lang.StringBuilder;
 import java.util.Random;
-import java.sql.*;
 import bugger.dataAccess.DataAccess;
+import bugger.dataAccess.UserData;
 
-public class User
+
+public class User extends DataModel
 	{
 	public String userID;
 	public String username;
@@ -14,7 +15,7 @@ public class User
 	public String alias;
 	public String firstName;
 	public String lastName;
-    private static final String alpNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+	public Permission[] permissions;
 
 	public User(String userID, String username, String email, String password, String alias, String firstName, String lastName)
 		{
@@ -22,31 +23,36 @@ public class User
 			{
 			return;
 			}
+		this.userID = userID;
 		this.username = username;
 		this.email =  email;
 		this.password = password;
 		this.alias = alias;
 		this.firstName = firstName;
 		this.lastName = lastName;
+
+		GetPermissions();
+		}
+
+	public void GetPermissions()
+		{
+		permissions = UserData.GetUserPermissions(username);
 		}
 
 	//Hashes out a userID
 	public static String GenerateUserID(String firstName,String lastName)
 		{
 		StringBuilder returnValue = new StringBuilder();
+		int number = DataAccess.GetLastID("lastUserID");
 
 		returnValue.append(firstName.charAt(0));
 		returnValue.append(lastName.charAt(0));
-		
-		long seed = (DataAccess.salt * firstName.charAt(0) + lastName.charAt(lastName.length()-1) );
+		returnValue.append("_");
+		returnValue.append(number);
 
-		Random gen = new Random();
-		gen.setSeed(seed);
-
-		for(int i = 0; i < 250; i++)
+		while(returnValue.length() < 35)
 			{
-			int indexAlpNum = (int)(gen.nextFloat() * (alpNum.length() - 1));
-			returnValue.append(alpNum.charAt(indexAlpNum));
+			returnValue.append(0);
 			}
 
 		return(returnValue.toString());
