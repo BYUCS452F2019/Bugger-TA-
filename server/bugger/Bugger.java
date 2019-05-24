@@ -38,10 +38,14 @@ public class Bugger
 			//User requests
 			server.createContext("/api/users/login", new LoginHandler());
 			server.createContext("/api/users/register", new RegisterHandler());
+			server.createContext("/api/users/allusers/", new GetAllUsersHandler());
 			server.createContext("/api/users", new GetUserHandler());
 
 			//Permission Requests
 			server.createContext("/api/permissions/", new PermissionHandler());
+
+			//Project Requests
+			server.createContext("/api/projects", new ProjectHandler());
 
 			//Defualt Requests
 			server.createContext("/", new RegisterHandler());

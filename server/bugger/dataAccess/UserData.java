@@ -80,6 +80,42 @@ public class UserData
 		return(returnValue);
 		}
 
+	//Returns all users in the database
+	public static User[] GetAllUsers()
+		{
+		ArrayList<User> userList = new ArrayList<User>();
+
+		try
+			{
+			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
+			Statement statement = connect.createStatement();
+			
+			//Get the permissions
+			ResultSet result = statement.executeQuery("SELECT * FROM User" );
+
+			while(result.next())
+				{
+				String userID = result.getString("userID");
+				String username = result.getString("username");
+				String email = result.getString("email");
+				String password = result.getString("password");
+				String alias = result.getString("alias");
+				String firstName = result.getString("firstName");
+				String lastName = result.getString("lastName");
+
+				userList.add(new User(userID,username,email,password,alias,firstName,lastName));
+				}
+
+			connect.close();
+			}
+		catch (Exception e)
+			{
+			System.out.println(e.getMessage()); 
+        	}
+
+		return(userList.toArray(new User[userList.size()]));
+		}
+
 	public static boolean CheckForUserByUsername(String username)
 		{
 		boolean returnValue = false;

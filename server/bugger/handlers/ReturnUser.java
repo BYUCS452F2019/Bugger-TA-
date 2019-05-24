@@ -14,7 +14,6 @@ public class ReturnUser
 
 	public ReturnUser(User userIn)
 		{
-		userID = userIn.userID;
 		username = userIn.username;
 		email = userIn.email;
 		alias = userIn.alias;
