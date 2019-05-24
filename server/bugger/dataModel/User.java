@@ -39,6 +39,23 @@ public class User extends DataModel
 		permissions = UserData.GetUserPermissions(username);
 		}
 
+	public boolean HasPermission(String permissionName)
+		{
+		boolean returnValue = false;
+
+		for(int i = 0; i < permissions.length; i++)
+			{
+			System.out.println(" -> Permission: " + permissions[i].permissionName);
+			if(permissions[i].permissionName.equals(permissionName))
+				{
+				returnValue = true;
+				break;
+				}
+			}
+
+		return(returnValue);
+		}
+
 	//Hashes out a userID
 	public static String GenerateUserID(String firstName,String lastName)
 		{

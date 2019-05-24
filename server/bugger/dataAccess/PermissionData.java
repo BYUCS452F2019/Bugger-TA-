@@ -1,6 +1,7 @@
 package bugger.dataAccess;
 
 import java.sql.*;
+import java.util.ArrayList;
 import bugger.dataModel.Permission;
 
 public class PermissionData
@@ -31,6 +32,36 @@ public class PermissionData
         	}
 
 		return(new Permission(permissionID,permissionName,discription));
+		}
+
+	public static Permission[] GetPermissions()
+		{
+		ArrayList<Permission> permissionList = new ArrayList<Permission>();
+
+		try
+			{
+			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
+			Statement statement = connect.createStatement();
+			
+			//Get the permissions
+			ResultSet result = statement.executeQuery("SELECT * FROM Permission" );
+
+			while(result.next())
+				{
+				String permissionID = result.getString("permissionID");
+				String permissionName = result.getString("permissionName");
+				String discription = result.getString("discription");
+				permissionList.add(new Permission(permissionID, permissionName,discription));
+				}
+
+			connect.close();
+			}
+		catch (Exception e)
+			{
+			System.out.println(e.getMessage()); 
+        	}
+
+		return(permissionList.toArray(new Permission[permissionList.size()]));
 		}
 
 	public static Permission GetByName(String permissionName)

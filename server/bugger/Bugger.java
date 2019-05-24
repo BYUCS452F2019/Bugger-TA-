@@ -34,9 +34,16 @@ public class Bugger
 			server = HttpServer.create(port,0);
 
 			//Listen in for requests
+
+			//User requests
 			server.createContext("/api/users/login", new LoginHandler());
 			server.createContext("/api/users/register", new RegisterHandler());
+			server.createContext("/api/users", new GetUserHandler());
 
+			//Permission Requests
+			server.createContext("/api/permissions/", new PermissionHandler());
+
+			//Defualt Requests
 			server.createContext("/", new RegisterHandler());
 
 			//Execute the database!

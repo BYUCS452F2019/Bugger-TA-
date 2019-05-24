@@ -41,11 +41,11 @@ public class UserData
 		}
 
 	//Gets a new user, DOES NOT get the user's permissions~
-	public static User GetUserByUsername(String username)
+	public static User GetUserByParameter(String query, String parameter)
 		{
 		User returnValue = null;
 
-		if(username == null)
+		if(query == null || parameter == null)
 			{
 			return null;
 			}
@@ -54,11 +54,12 @@ public class UserData
 			{
 			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
 			Statement statement = connect.createStatement();
-			ResultSet result = statement.executeQuery("SELECT userID,email,password,alias,firstName,lastName FROM User WHERE username = '"+ username +"'" );
+			ResultSet result = statement.executeQuery("SELECT userID,username,email,password,alias,firstName,lastName FROM User WHERE " + parameter + " = '"+ query +"'" );
 
 			result.next();
 
 			String userID = result.getString("userID");
+			String username = result.getString("username");
 			String email = result.getString("email");
 			String password = result.getString("password");
 			String alias = result.getString("alias");
@@ -113,7 +114,7 @@ public class UserData
 		{
 		boolean returnValue = false;
 		//Load the user and permission
-		User targetUser = GetUserByUsername(username);
+		User targetUser = GetUserByParameter(username, "username");
 		Permission targetPermission = PermissionData.GetByName(permissionName);
 
 		if(targetUser != null || targetPermission != null)

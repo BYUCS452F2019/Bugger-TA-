@@ -9,9 +9,10 @@ public class RegisterHandler implements HttpHandler
 	{
 	public void handle(HttpExchange exchange) throws IOException
 		{
-        System.out.println("-- Registration Request made -- ");
-		System.out.println(Utility.InputStreamToString(exchange.getRequestBody()));
+        System.out.print("\n -- Called DEFAULT on: ");
 		System.out.println(exchange.getHttpContext().getPath());
+        System.out.print("-- Girl look at this body: ");
+		System.out.println(Utility.InputStreamToString(exchange.getRequestBody()));
 		if(exchange.getRequestMethod().toLowerCase().equals("put") == true)
 			{
 			}

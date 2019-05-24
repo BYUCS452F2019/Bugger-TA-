@@ -46,12 +46,8 @@ public class DataAccess
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Cookies("
 									+ "cookieID VARCHAR(255) NOT NULL PRIMARY KEY UNIQUE,"
 									+ "userID VARCHAR(255) NOT NULL,"
-									+ "timestamp DATETIME NOT NULL)");
-
-			//Create User Permission Table
-			statement.executeUpdate("CREATE TABLE IF NOT EXISTS UserPermission("
-									+ "permissionID VARCHAR(255) NOT NULL PRIMARY KEY,"
-									+ "userID VARCHAR(255) NOT NULL)");
+									+ "timestamp DATETIME NOT NULL,"
+									+ "FOREIGN KEY (userID) REFERENCES User(userID))");
 
 			//Create a table to store Permission groups
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Permission("
@@ -64,6 +60,13 @@ public class DataAccess
 									+ "projectID VARCHAR(255) NOT NULL PRIMARY KEY,"
 									+ "projectName VARCHAR(255) NOT NULL,"
 									+ "discription TEXT)");
+
+			//Create User Permission Table
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS UserPermission("
+									+ "permissionID VARCHAR(255) NOT NULL PRIMARY KEY,"
+									+ "userID VARCHAR(255) NOT NULL,"
+									+ "FOREIGN KEY (permissionID) REFERENCES Permission(permissionID),"
+									+ "FOREIGN KEY (userID) REFERENCES User(userID))");
 
 			//Create the admin user/admin permission; Make sure that the admin account is in the admin permission group
 			if(PermissionData.GetByName("admin") == null)

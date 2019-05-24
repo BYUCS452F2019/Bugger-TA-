@@ -9,7 +9,7 @@ import bugger.dataModel.Cookie;
 
 public class CookieData
 	{
-	private static String timeFormat = "yyyy/MM/dd HH:mm:ss";
+	private static String timeFormat = "yyyy-MM-dd HH:mm:ss";
 
 	public static Cookie CreateNewCookie(String userID)
 		{
@@ -37,6 +37,32 @@ public class CookieData
 		return(new Cookie(cookieID, userID, timestamp));
 		}
 
+	public static String GetUserFromCookie(String cookieID)
+		{
+		String returnID = null;
+
+		try
+			{
+			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
+			Statement statement = connect.createStatement();
+		
+			ResultSet result = statement.executeQuery("SELECT userID FROM Cookies WHERE cookieID = '" + cookieID + "'");
+
+			if(result.next())
+				{
+				returnID = result.getString("userID");
+				}
+
+			connect.close();
+			}
+		catch (Exception e)
+			{
+			System.out.println(e.getMessage()); 
+        	}
+
+		return(returnID);
+		}
+
 	public static boolean VerifyCookie(String cookieID)
 		{
 		boolean returnValue = false;
@@ -51,6 +77,8 @@ public class CookieData
 				{
 				DateFormat dateFormat = new SimpleDateFormat(timeFormat);
 				String timestamp = result.getString("timestamp");
+
+				//System.out.println(timestamp);
 
 				Date currentDate = new Date();
 				Date cookieDate = dateFormat.parse(timestamp);
