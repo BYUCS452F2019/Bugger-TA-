@@ -37,7 +37,7 @@ public class UserData
 			System.out.println(e.getMessage()); 
         	}
 
-		return(new User(userID,username,email,hashedPassword,alias,firstName,lastName));
+		return(new User(userID,username,email,hashedPassword,alias,firstName,lastName,true));
 		}
 
 	//Gets a new user, DOES NOT get the user's permissions~
@@ -54,7 +54,7 @@ public class UserData
 			{
 			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
 			Statement statement = connect.createStatement();
-			ResultSet result = statement.executeQuery("SELECT userID,username,email,password,alias,firstName,lastName FROM User WHERE " + parameter + " = '"+ query +"'" );
+			ResultSet result = statement.executeQuery("SELECT * FROM User WHERE " + parameter + " = '"+ query +"'" );
 
 			result.next();
 
@@ -65,10 +65,11 @@ public class UserData
 			String alias = result.getString("alias");
 			String firstName = result.getString("firstName");
 			String lastName = result.getString("lastName");
+			boolean enabled = result.getBoolean("enabled");
 
 			if(username != null && email != null && password != null && firstName != null && lastName != null)
 				{
-				returnValue = new User(userID,username,email,password,alias,firstName,lastName);
+				returnValue = new User(userID,username,email,password,alias,firstName,lastName,enabled);
 				}
 			connect.close();
 			}
@@ -102,8 +103,9 @@ public class UserData
 				String alias = result.getString("alias");
 				String firstName = result.getString("firstName");
 				String lastName = result.getString("lastName");
+				boolean enabled = result.getBoolean("enabled");
 
-				userList.add(new User(userID,username,email,password,alias,firstName,lastName));
+				userList.add(new User(userID,username,email,password,alias,firstName,lastName,enabled));
 				}
 
 			connect.close();
@@ -129,7 +131,7 @@ public class UserData
 			{
 			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
 			Statement statement = connect.createStatement();
-			ResultSet result = statement.executeQuery("SELECT userID,email,password,alias,firstName,lastName FROM User WHERE username = '"+ username +"'" );
+			ResultSet result = statement.executeQuery("SELECT * FROM User WHERE username = '"+ username +"'" );
 
 			if(result.next())
 				{
@@ -193,7 +195,7 @@ public class UserData
 				String userID = result.getString("USERID");
 				
 				//Get the permissions
-				result = statement.executeQuery("SELECT * FROM Permission JOIN UserPermission on UserPermission.permissionID = Permission.permissionID WHERE userID ='"+ userID +"'" );
+				result = statement.executeQuery("SELECT * FROM  UserPermission JOIN Permission on UserPermission.permissionID = Permission.permissionID WHERE userID ='"+ userID +"'" );
 
 				while(result.next())
 					{

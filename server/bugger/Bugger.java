@@ -45,6 +45,7 @@ public class Bugger
 			server.createContext("/api/permissions/", new PermissionHandler());
 
 			//Project Requests
+			server.createContext("/api/projects/security", new ProjectPerHandler());
 			server.createContext("/api/projects", new ProjectHandler());
 
 			//Defualt Requests

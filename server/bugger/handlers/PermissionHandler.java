@@ -23,6 +23,10 @@ public class PermissionHandler implements HttpHandler
 			{
 			GetPermissions(exchange);
 			}
+		else if(exchange.getRequestMethod().toLowerCase().equals("delete") == true)
+			{
+			DeletePermission(exchange);
+			}
 		}
 
 	private void CreateNewPermission(HttpExchange exchange) throws IOException
@@ -114,6 +118,55 @@ public class PermissionHandler implements HttpHandler
 
 			returnMessage = new Gson().toJson(jsonResponce);
 			exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+			}
+		else
+			{
+			exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, 0);
+			returnMessage = "Invalid or expired Cookie! Try loging in again!";
+			}
+
+		OutputStream stream = exchange.getResponseBody();
+		Utility.WriteStringToStream(stream,returnMessage);			
+		stream.close();
+		exchange.close();
+    	System.out.println(" -- REQUEST COMPLETE -- \n");
+		}
+
+	private void DeletePermission(HttpExchange exchange) throws IOException
+		{
+        System.out.println("\n -- Deleting Permissions -- ");
+
+		String returnMessage = "";
+		Headers headers = exchange.getRequestHeaders();
+
+		String cookieContents = HandlerUtilites.GetCookieIDFromCookie(headers);
+
+		System.out.println(" -> Authenticating Cookie: " + cookieContents);
+		if(CookieData.VerifyCookie(cookieContents))
+			{
+			String permissionName = exchange.getRequestURI().getPath().substring(17);
+			System.out.println(" -> Target Permission: " + permissionName);
+
+			User user = HandlerUtilites.GetUserFromCookie(cookieContents);
+
+			if(user.HasPermission("admin") == true)
+				{
+				System.out.println(" -> Authenticated! Attempting to remove permission!");
+				if(PermissionData.DeleteByName(permissionName))
+					{
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_ACCEPTED, 0);
+					}
+				else
+					{
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+					}
+				//End of verify cookie if
+				}
+			else
+				{
+				exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, 0);
+				returnMessage = "User does not have required permissions!";
+				}
 			}
 		else
 			{

@@ -102,4 +102,46 @@ public class PermissionData
 
 		return(returnValue);
 		}
+
+	public static boolean DeleteByName(String permissionName)
+		{
+		boolean returnValue = false;
+
+		if(permissionName == null || permissionName == "admin")
+			{
+			return false;
+			}
+
+		try
+			{
+			Connection connect = DriverManager.getConnection(DataAccess.databaseConnection);
+			Statement statement = connect.createStatement();
+
+			String permissionID = null;
+
+			//Get the id
+			ResultSet result = statement.executeQuery("SELECT permissionID FROM Permission WHERE permissionName = '"+ permissionName +"'" );
+			while(result.next())
+				{
+				permissionID = result.getString("permissionID");
+				}
+
+			if(permissionID != null)
+				{
+				returnValue = true;
+				//Remove it from all the tables
+				statement.executeUpdate("DELETE FROM Permission WHERE permissionID = '"+ permissionID +"'" );
+				statement.executeUpdate("DELETE FROM UserPermission WHERE permissionID = '"+ permissionID +"'" );
+				statement.executeUpdate("DELETE FROM ProjectPermission WHERE permissionID = '"+ permissionID +"'" );
+				}
+
+			connect.close();
+			}
+		catch (Exception e)
+			{
+			System.out.println(e.getMessage()); 
+        	}
+
+		return(returnValue);
+		}
 	}

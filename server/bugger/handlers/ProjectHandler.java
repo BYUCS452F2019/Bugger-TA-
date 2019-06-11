@@ -19,12 +19,50 @@ public class ProjectHandler implements HttpHandler
 		{
 		if(exchange.getRequestMethod().toLowerCase().equals("post") == true)
 			{
-
+			CreateNewProject(exchange);
 			}
 		else if(exchange.getRequestMethod().toLowerCase().equals("get") == true)
 			{
 			GetProjects(exchange);
 			}
+		}
+
+	private void CreateNewProject(HttpExchange exchange) throws IOException
+		{
+	    System.out.println("\n -- Creating a new Projects -- ");
+
+		String returnMessage = "";
+		Headers headers = exchange.getRequestHeaders();
+
+		String cookieContents = HandlerUtilites.GetCookieIDFromCookie(headers);
+
+		System.out.println(" -> Authenticating Cookie: " + cookieContents);
+		if(CookieData.VerifyCookie(cookieContents))
+			{
+			System.out.println(" -> Creating Project");
+			ProjectJSON newProject = new Gson().fromJson(Utility.InputStreamToString(exchange.getRequestBody()), ProjectJSON.class);
+			if(ProjectData.CreateNewProject(newProject.projectName,newProject.projectDisc) != null)
+				{
+				returnMessage = "Created new project successfully!";
+				}
+			else
+				{
+				returnMessage = "Error creating new project! Check that the name is not already taken!";
+				}
+
+			exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+			}
+		else
+			{
+			exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, 0);
+			returnMessage = "Invalid or expired Cookie! Try loging in again!";
+			}
+
+		OutputStream stream = exchange.getResponseBody();
+		Utility.WriteStringToStream(stream,returnMessage);			
+		stream.close();
+		exchange.close();
+		System.out.println(" -- REQUEST COMPLETE -- \n");
 		}
 
 	private void GetProjects(HttpExchange exchange) throws IOException
@@ -44,7 +82,7 @@ public class ProjectHandler implements HttpHandler
 
 			for(int i = 0; i < projects.length; i++)
 				{
-				jsonResponce[i] = new ProjectJSON(projects[i].projectName, projects[i].projectName);
+				jsonResponce[i] = new ProjectJSON(projects[i]);
 				}
 
 			returnMessage = new Gson().toJson(jsonResponce);
@@ -66,12 +104,23 @@ public class ProjectHandler implements HttpHandler
 	private class ProjectJSON
 		{
 		public String projectName;
-		public String discription;
+		public String defaultAssignee;
+		public String projectDisc;
+		public String[] permissions;
+		public String[] bugs;
 
-		ProjectJSON(String projectName, String discription)
+		ProjectJSON(Project targetProject)
 			{
-			this.projectName = projectName;
-			this.discription = discription;
+			this.projectName = targetProject.projectName;
+			this.projectDisc = targetProject.discription;
+			this.defaultAssignee = defaultAssignee;
+
+			permissions = new String[targetProject.permissions.length];
+
+			for(int i= 0; i < permissions.length; i++)
+				{
+				permissions[i] = targetProject.permissions[i].permissionName;
+				}
 			}
 		}
 	}

@@ -10,6 +10,7 @@ public class ReturnUser
 	public String alias;
 	public String firstName;
 	public String lastName;
+	public boolean enabled;
 	public String[] permissions;
 
 	public ReturnUser(User userIn)
@@ -19,6 +20,7 @@ public class ReturnUser
 		alias = userIn.alias;
 		firstName = userIn.firstName;
 		lastName = userIn.lastName;
+		enabled = userIn.enabled;
 
 		permissions = new String[userIn.permissions.length];
 

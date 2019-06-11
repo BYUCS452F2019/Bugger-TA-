@@ -15,9 +15,10 @@ public class User extends DataModel
 	public String alias;
 	public String firstName;
 	public String lastName;
+	public boolean enabled;
 	public Permission[] permissions;
 
-	public User(String userID, String username, String email, String password, String alias, String firstName, String lastName)
+	public User(String userID, String username, String email, String password, String alias, String firstName, String lastName, boolean enabled)
 		{
 		if(username == null || email == null || password == null || firstName == null || lastName == null)
 			{
@@ -30,6 +31,7 @@ public class User extends DataModel
 		this.alias = alias;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.enabled = enabled;
 
 		GetPermissions();
 		}

@@ -40,7 +40,8 @@ public class DataAccess
 									+ "password TEXT NOT NULL," 
 									+ "alias VARCHAR(255),"
 									+ "firstName VARCHAR(255) NOT NULL,"
-									+ "lastName VARCHAR(255) NOT NULL)");
+									+ "lastName VARCHAR(255) NOT NULL,"
+									+ "enabled BOOLEAN DEFAULT true)");
 
 			//Create a Table to store user cookies
 			statement.executeUpdate("CREATE TABLE IF NOT EXISTS Cookies("
@@ -67,6 +68,13 @@ public class DataAccess
 									+ "userID VARCHAR(255) NOT NULL,"
 									+ "FOREIGN KEY (permissionID) REFERENCES Permission(permissionID),"
 									+ "FOREIGN KEY (userID) REFERENCES User(userID))");
+
+			//Create User Permission Table
+			statement.executeUpdate("CREATE TABLE IF NOT EXISTS ProjectPermission("
+									+ "permissionID VARCHAR(255) NOT NULL PRIMARY KEY,"
+									+ "projectID VARCHAR(255) NOT NULL,"
+									+ "FOREIGN KEY (permissionID) REFERENCES Permission(permissionID),"
+									+ "FOREIGN KEY (projectID) REFERENCES Project(projectID))");
 
 			//Create the admin user/admin permission; Make sure that the admin account is in the admin permission group
 			if(PermissionData.GetByName("admin") == null)
