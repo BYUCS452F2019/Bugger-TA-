@@ -6,9 +6,11 @@ Bugger is bug tracking software that has a focus on being easy to set up, use, a
 Bugger is meant to help small teams identify bugs, and track them through the life of their projects, helping to ensure that old bugs don't pop up again.
 
 Features:
-	- Authentication, with encrypted passwords
-	- Security groups, keeping projects secure within teams
-	- Comments allowing disscussion about bugs and fixes
+<ol>
+  <li>Authentication, with encrypted passwords</li>
+  <li>Security groups, keeping projects secure within teams</li>
+  <li>Comments allowing disscussion about bugs and fixes</li>
+</ol>
 
 Bugger 0.3 will focus on the following updates to 0.2
 <ol>
