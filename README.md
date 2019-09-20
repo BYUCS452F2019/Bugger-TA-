@@ -21,4 +21,6 @@ Bugger 0.3 will focus on the following updates to 0.2
   <li>Adding in search functionality to help with organizations with lots of bugs/projects</li>
 </ol>
 
+Bugger is under an open-source MIT licence.
+
 --- <font color="red"></b>Bugger is still under developement, and many key features are still missing, therefore, it would be considered unwise to use it for your active projects at this time.</b></font> ---
